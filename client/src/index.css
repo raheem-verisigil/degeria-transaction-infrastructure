@@ -115,3 +115,10 @@ html[dir="rtl"] .detail-connector { left:auto; right:-40px; }
 html[dir="rtl"] .passport-insight > div:nth-of-type(4) { margin-left:0; margin-right:auto; }
 html[dir="rtl"] .research-topics span, html[dir="rtl"] .footer-links, html[dir="rtl"] .footer-top { direction:rtl; }
 @media (max-width:760px) { .locale-picker select { max-width:78px; font-size:9px; padding-right:15px; } html[dir="rtl"] .mobile-nav a { flex-direction:row-reverse; } }
+
+.hero-question { max-width:570px; color:#dceaf8; font-size:18px; line-height:1.4; margin:0 0 11px; font-weight:500; }
+.visual-caption { color:#8ba8be; }
+.passport-intro-note { color:#43d9c5; }
+.passport-intro-note small { color:#6687a3; }
+.sim-control-head .blue-badge { color:#1679b5; border-color:#91c5e7; max-width:230px; }
+@media (max-width:760px) { .hero-question { font-size:16px; } .sim-control-head { align-items:flex-start; gap:12px; } .sim-control-head .blue-badge { max-width:180px; text-align:right; } }
