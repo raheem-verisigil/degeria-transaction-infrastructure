@@ -11,6 +11,12 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/en" component={Home} />
       <Route path="/tr" component={Home} />
+      <Route path="/ar" component={Home} />
+      <Route path="/de" component={Home} />
+      <Route path="/it" component={Home} />
+      <Route path="/zh" component={Home} />
+      <Route path="/fr" component={Home} />
+      <Route path="/pt" component={Home} />
       <Route path="/technology" component={TechnologyPage} />
       <Route path="/manufacturers" component={ManufacturersPage} />
       <Route path="/institutions" component={InstitutionsPage} />

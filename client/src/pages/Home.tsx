@@ -1,4 +1,4 @@
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "wouter";
 import {
   ArrowDown,
@@ -25,6 +25,25 @@ import {
 
 const blue = "#2d7dff";
 const teal = "#43d9c5";
+
+export const supportedLocales = ["en", "tr", "ar", "de", "it", "zh", "fr", "pt"] as const;
+export type Locale = (typeof supportedLocales)[number];
+
+const localeLabels: Record<Locale, string> = { en: "English", tr: "Türkçe", ar: "العربية", de: "Deutsch", it: "Italiano", zh: "中文", fr: "Français", pt: "Português" };
+const localeFromPath = (path: string): Locale => {
+  const candidate = path.split("/")[1] as Locale;
+  return supportedLocales.includes(candidate) ? candidate : "en";
+};
+const copy: Record<Locale, { eyebrow: string; title: string; emphasis: string; titleEnd: string; lede: string; primary: string; secondary: string; explore: string }> = {
+  en: { eyebrow: "Economic transaction infrastructure", title: "Know what a transaction is", emphasis: "really worth", titleEnd: "before you commit.", lede: "DEĞERIA turns fragmented commercial, production, import, export and financial evidence into a continuously updated Economic Transaction Passport.", primary: "Evaluate a real transaction", secondary: "Explore the Passport", explore: "Explore the infrastructure" },
+  tr: { eyebrow: "Ekonomik işlem altyapısı", title: "Bir işlemin gerçekte", emphasis: "ne değer taşıdığını", titleEnd: "taahhüt etmeden önce bilin.", lede: "DEĞERIA; ticari, üretim, ithalat, ihracat ve finansal kanıtları sürekli güncellenen bir Ekonomik İşlem Pasaportunda birleştirir.", primary: "Gerçek bir işlemi değerlendirin", secondary: "Pasaportu keşfedin", explore: "Altyapıyı keşfedin" },
+  ar: { eyebrow: "بنية تحتية للمعاملات الاقتصادية", title: "اعرف القيمة الحقيقية", emphasis: "للمعاملة", titleEnd: "قبل الالتزام بها.", lede: "تجمع DEĞERIA الأدلة التجارية والإنتاجية والاستيراد والتصدير والمالية في جواز معاملة اقتصادية محدث باستمرار.", primary: "قيّم معاملة حقيقية", secondary: "استكشف جواز المعاملة", explore: "استكشف البنية التحتية" },
+  de: { eyebrow: "Infrastruktur für Wirtschaftstransaktionen", title: "Erkennen Sie, was eine Transaktion", emphasis: "wirklich wert ist", titleEnd: "bevor Sie sich festlegen.", lede: "DEĞERIA verbindet fragmentierte kommerzielle, Produktions-, Import-, Export- und Finanznachweise zu einem laufend aktualisierten Wirtschaftstransaktionspass.", primary: "Eine echte Transaktion bewerten", secondary: "Den Pass erkunden", explore: "Infrastruktur erkunden" },
+  it: { eyebrow: "Infrastruttura per le transazioni economiche", title: "Conosci il valore reale", emphasis: "di una transazione", titleEnd: "prima di impegnarti.", lede: "DEĞERIA trasforma le evidenze commerciali, produttive, di importazione, esportazione e finanziarie in un Passaporto della Transazione Economica aggiornato continuamente.", primary: "Valuta una transazione reale", secondary: "Esplora il Passaporto", explore: "Esplora l'infrastruttura" },
+  zh: { eyebrow: "经济交易基础设施", title: "在承诺之前，了解一笔交易", emphasis: "真正的价值", titleEnd: "。", lede: "DEĞERIA 将分散的商业、生产、进口、出口和金融证据，转化为持续更新的经济交易护照。", primary: "评估一笔真实交易", secondary: "探索交易护照", explore: "探索基础设施" },
+  fr: { eyebrow: "Infrastructure des transactions économiques", title: "Connaissez la valeur réelle", emphasis: "d'une transaction", titleEnd: "avant de vous engager.", lede: "DEĞERIA transforme les preuves commerciales, de production, d'importation, d'exportation et financières en un Passeport de Transaction Économique mis à jour en continu.", primary: "Évaluer une transaction réelle", secondary: "Explorer le Passeport", explore: "Explorer l'infrastructure" },
+  pt: { eyebrow: "Infraestrutura de transações econômicas", title: "Saiba quanto uma transação", emphasis: "realmente vale", titleEnd: "antes de se comprometer.", lede: "A DEĞERIA transforma evidências comerciais, de produção, importação, exportação e financeiras fragmentadas em um Passaporte de Transação Econômica continuamente atualizado.", primary: "Avaliar uma transação real", secondary: "Explorar o Passaporte", explore: "Explorar a infraestrutura" },
+};
 
 const evidenceTabs = [
   { id: "commercial", label: "COMMERCIAL", value: "€2,500,000", sub: "Sales contract", status: "OBSERVED", color: "blue" },
@@ -60,6 +79,11 @@ function BrandMark() {
 function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [location] = useLocation();
+  const currentLocale = localeFromPath(location);
+  useEffect(() => {
+    document.documentElement.lang = currentLocale;
+    document.documentElement.dir = currentLocale === "ar" ? "rtl" : "ltr";
+  }, [currentLocale]);
   const links = [
     ["Product", "/#passport"],
     ["How it works", "/#mechanism"],
@@ -76,7 +100,7 @@ function SiteHeader() {
           {links.map(([label, href]) => <a key={label} href={href} className={location === href ? "active" : ""}>{label}</a>)}
         </nav>
         <div className="header-actions">
-          <div className="locale"><a href="/en" className={location === "/tr" ? "" : "active"}>EN</a><a href="/tr" className={location === "/tr" ? "active" : ""}>TR</a></div>
+          <label className="locale-picker"><span className="sr-only">Language</span><select aria-label="Select language" value={currentLocale} onChange={(event) => { window.location.href = `/${event.target.value}`; }}>{supportedLocales.map((locale) => <option key={locale} value={locale}>{locale.toUpperCase()} · {localeLabels[locale]}</option>)}</select></label>
           <Link href="/evaluate" className="header-cta">Evaluate a transaction <ArrowUpRight size={14} /></Link>
           <button className="mobile-menu-button" aria-label={open ? "Close navigation" : "Open navigation"} onClick={() => setOpen(!open)}>{open ? <X size={20} /> : <Menu size={20} />}</button>
         </div>
@@ -111,7 +135,9 @@ function HeroTransactionVisual() {
 }
 
 function Hero() {
-  return <section className="hero" id="top"><div className="hero-noise" /><div className="container hero-inner"><div className="hero-copy"><SectionLabel index="01" light>Economic transaction infrastructure</SectionLabel><h1>Know what a transaction is <em>really worth</em> before you commit.</h1><p className="hero-lede">DEĞERIA turns fragmented commercial, production, import, export and financial evidence into a continuously updated <strong>Economic Transaction Passport.</strong></p><div className="hero-ctas"><Link href="/evaluate" className="button button-primary">Evaluate a real transaction <ArrowUpRight size={16} /></Link><a href="#passport" className="button button-ghost">Explore the Passport <ArrowDown size={16} /></a></div><div className="hero-proof"><span><CheckCircle2 size={15} /> Evidence-linked</span><span><CheckCircle2 size={15} /> Traceable</span><span><CheckCircle2 size={15} /> Decision-support</span></div></div><HeroTransactionVisual /></div><div className="hero-bottom container"><div>ONE TRANSACTION <span>·</span> ONE EVIDENCE TRAIL <span>·</span> ONE ECONOMIC HISTORY</div><div className="scroll-cue"><span />Scroll to explore</div></div></section>;
+  const [location] = useLocation();
+  const t = copy[localeFromPath(location)];
+  return <section className="hero" id="top"><div className="hero-noise" /><div className="container hero-inner"><div className="hero-copy"><SectionLabel index="01" light>{t.eyebrow}</SectionLabel><h1>{t.title} <em>{t.emphasis}</em> {t.titleEnd}</h1><p className="hero-lede">{t.lede}</p><div className="hero-ctas"><Link href="/evaluate" className="button button-primary">{t.primary} <ArrowUpRight size={16} /></Link><a href="#passport" className="button button-ghost">{t.secondary} <ArrowDown size={16} /></a></div><div className="hero-proof"><span><CheckCircle2 size={15} /> Evidence-linked</span><span><CheckCircle2 size={15} /> Traceable</span><span><CheckCircle2 size={15} /> Decision-support</span></div></div><HeroTransactionVisual /></div><div className="hero-bottom container"><div>ONE TRANSACTION <span>·</span> ONE EVIDENCE TRAIL <span>·</span> ONE ECONOMIC HISTORY</div><div className="scroll-cue"><span />Scroll to explore</div></div></section>;
 }
 
 function FragmentedEvidence() {
