@@ -84,7 +84,7 @@ const graphNodes = [
 function BrandMark() {
   return (
     <span className="brand-mark" aria-label="DEĞERIA home">
-      <img src="/manus-storage/IMG-20260903-WA0246_3895bb80.jpg" alt="DEĞERIA — Economic Transaction Infrastructure" />
+      <img src="/degeria-logo.jpg" alt="DEĞERIA — Economic Transaction Infrastructure" />
     </span>
   );
 }
