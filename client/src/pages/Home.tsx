@@ -399,6 +399,17 @@ function ProductSection({ n, title, body, id }: { n: string; title: string; body
 }
 
 export function ProductPage() {
+  useEffect(() => {
+    if (!window.location.hash) return;
+    const id = window.location.hash.slice(1);
+    // Wait a tick for the page to actually render before trying to scroll —
+    // the browser's native anchor-jump fires too early in a client-rendered
+    // SPA, before the target element exists in the DOM yet.
+    const timer = setTimeout(() => {
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
   const sections = [
     { n: "01", title: "The problem", body: "The economic reality of an important transaction is distributed across a contract, a BOM, supplier quotes, import documents, production records, freight, an invoice, payment terms and receivable information. No single system holds the whole picture." },
     { n: "02", id: "passport", title: "What the Passport is", body: "The Transaction Passport is a structured, evidence-linked representation of one transaction — commercial, import, production, export, financial and risk information connected in a single record, not scattered across documents." },
