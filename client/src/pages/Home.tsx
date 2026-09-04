@@ -92,34 +92,54 @@ function BrandMark() {
 
 function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const [productOpen, setProductOpen] = useState(false);
   const [location] = useLocation();
   const currentLocale = localeFromPath(location);
   useEffect(() => {
     document.documentElement.lang = currentLocale;
     document.documentElement.dir = currentLocale === "ar" ? "rtl" : "ltr";
   }, [currentLocale]);
+  const productItems = [
+    ["Transaction Passport", "/product#passport"],
+    ["Evidence Graph", "/technology"],
+    ["Transaction Evidence File", "/product#evidence-file"],
+  ];
   const links = [
-    ["Product", "/product"],
     ["How it works", "/#mechanism"],
     ["Manufacturers", "/manufacturers"],
     ["Institutions", "/institutions"],
-    ["Technology", "/technology"],
     ["Research", "/research"],
+    ["Technology", "/technology"],
   ];
   return (
     <header className="site-header">
       <div className="header-inner">
         <Link href="/"><BrandMark /></Link>
         <nav className="desktop-nav" aria-label="Primary navigation">
+          <div
+            style={{ position: "relative", display: "inline-block" }}
+            onMouseEnter={() => setProductOpen(true)}
+            onMouseLeave={() => setProductOpen(false)}
+          >
+            <Link href="/product" className={location === "/product" ? "active" : ""} aria-haspopup="true" aria-expanded={productOpen}>Product</Link>
+            {productOpen && <div style={{ position: "absolute", top: "100%", left: 0, background: "#151b23", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, padding: 6, minWidth: 200, zIndex: 20 }}>
+              {productItems.map(([label, href]) => <a key={label} href={href} style={{ display: "block", padding: "8px 10px", fontSize: 13, color: "#e6edf3", borderRadius: 6, whiteSpace: "nowrap" }}>{label}</a>)}
+            </div>}
+          </div>
           {links.map(([label, href]) => <a key={label} href={href} className={location === href ? "active" : ""}>{label}</a>)}
         </nav>
         <div className="header-actions">
           <label className="locale-picker"><span className="sr-only">Language</span><select aria-label="Select language" value={currentLocale} onChange={(event) => { window.location.href = `/${event.target.value}`; }}>{supportedLocales.map((locale) => <option key={locale} value={locale}>{locale.toUpperCase()} · {localeLabels[locale]}</option>)}</select></label>
-          <Link href="/evaluate" className="header-cta">Build a Transaction Passport <ArrowUpRight size={14} /></Link>
+          <Link href="/evaluate" className="header-cta">Bring a Transaction <ArrowUpRight size={14} /></Link>
           <button className="mobile-menu-button" aria-label={open ? "Close navigation" : "Open navigation"} onClick={() => setOpen(!open)}>{open ? <X size={20} /> : <Menu size={20} />}</button>
         </div>
       </div>
-      {open && <div className="mobile-nav"><nav aria-label="Mobile navigation">{links.map(([label, href]) => <a key={label} href={href} onClick={() => setOpen(false)}>{label}<ChevronRight size={15} /></a>)}<Link href="/evaluate" onClick={() => setOpen(false)} className="mobile-eval">Build a Transaction Passport <ArrowUpRight size={15} /></Link></nav></div>}
+      {open && <div className="mobile-nav"><nav aria-label="Mobile navigation">
+        <a href="/product" onClick={() => setOpen(false)}>Product<ChevronRight size={15} /></a>
+        {productItems.map(([label, href]) => <a key={label} href={href} onClick={() => setOpen(false)} style={{ paddingLeft: 24, fontSize: 13, opacity: 0.85 }}>{label}<ChevronRight size={15} /></a>)}
+        {links.map(([label, href]) => <a key={label} href={href} onClick={() => setOpen(false)}>{label}<ChevronRight size={15} /></a>)}
+        <Link href="/evaluate" onClick={() => setOpen(false)} className="mobile-eval">Bring a Transaction <ArrowUpRight size={15} /></Link>
+      </nav></div>}
     </header>
   );
 }
@@ -366,8 +386,8 @@ export function ResearchPage() {
   return <SubpageShell eyebrow="Research / 2026" title={<>The transaction is becoming the <em>unit of understanding.</em></>} intro="Architecture papers, pilot findings, anonymized transaction research and methodology for a new category of economic infrastructure."><section className="subpage-section"><div className="container"><div className="research-list">{topics.map((topic, i) => <article key={topic}><div><span className="object-number">0{i + 1}</span><span className="status-badge">METHODOLOGY</span></div><h3>{topic}</h3><p>Foundational notes on how evidence, economics, decisions and outcomes remain connected across a transaction lifecycle.</p><ArrowUpRight size={18} /></article>)}</div><div className="research-method"><div><SectionLabel index="01">Methodology</SectionLabel><h2>Credibility comes from <em>traceability.</em></h2></div><p>DEĞERIA avoids unsupported claims. Every output uses controlled status language: observed, calculated, assumed, predicted, recommended, decided and actual.</p></div></div></section></SubpageShell>;
 }
 
-function ProductSection({ n, title, body }: { n: string; title: string; body: string }) {
-  return <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", padding: "28px 0" }}>
+function ProductSection({ n, title, body, id }: { n: string; title: string; body: string; id?: string }) {
+  return <div id={id} style={{ borderTop: "1px solid rgba(255,255,255,0.08)", padding: "28px 0" }}>
     <div style={{ display: "flex", gap: 20, alignItems: "flex-start", flexWrap: "wrap" }}>
       <span style={{ fontSize: 13, color: "#5f6b7a", flex: "0 0 32px" }}>{n}</span>
       <div style={{ flex: "1 1 320px" }}>
@@ -381,19 +401,19 @@ function ProductSection({ n, title, body }: { n: string; title: string; body: st
 export function ProductPage() {
   const sections = [
     { n: "01", title: "The problem", body: "The economic reality of an important transaction is distributed across a contract, a BOM, supplier quotes, import documents, production records, freight, an invoice, payment terms and receivable information. No single system holds the whole picture." },
-    { n: "02", title: "What the Passport is", body: "The Transaction Passport is a structured, evidence-linked representation of one transaction — commercial, import, production, export, financial and risk information connected in a single record, not scattered across documents." },
+    { n: "02", id: "passport", title: "What the Passport is", body: "The Transaction Passport is a structured, evidence-linked representation of one transaction — commercial, import, production, export, financial and risk information connected in a single record, not scattered across documents." },
     { n: "03", title: "Transaction lifecycle", body: "Import inputs, production, export, shipment, receivable and payment — the Passport follows the transaction through each stage, not just the order that starts it." },
     { n: "04", title: "Evidence model", body: "Every piece of evidence is versioned and never silently overwritten. Evidence can be uploaded as a document or entered as structured data, and relationships between evidence items can be declared explicitly." },
     { n: "05", title: "Economic model", body: "Revenue, cost, margin, cash requirement and FX exposure are calculated deterministically from stated inputs — the same inputs always produce the same output, and every number can be traced back to what produced it." },
     { n: "06", title: "Risk and readiness", body: "Financeability readiness and insurance readiness are structured checklists for institutional review — never a credit rating, a loan approval, or an insurance underwriting decision." },
-    { n: "07", title: "Evidence file", body: "The Transaction Evidence File brings the transaction, its evidence and its assessment together as one exportable package — PDF or machine-readable JSON — labelled pre-verification until an actual verification standard exists." },
+    { n: "07", id: "evidence-file", title: "Evidence file", body: "The Transaction Evidence File brings the transaction, its evidence and its assessment together as one exportable package — PDF or machine-readable JSON — labelled pre-verification until an actual verification standard exists." },
     { n: "08", title: "Scenario analysis", body: "Explore transaction sensitivity — payment term changes, supplier cost movement, freight increases — as deterministic calculations under stated assumptions, not predictions." },
     { n: "09", title: "Decision and outcome memory", body: "A system recommendation is recorded separately from the human decision that follows it. Later, the actual outcome is recorded too, so prediction and reality stay connected." },
     { n: "10", title: "Bring a real transaction", body: "The first real proof is reconstruction, not another synthetic demo. Bring us one significant import-to-production-to-export transaction and we'll reconstruct the evidence, economics and readiness structure with you." },
   ];
   return <SubpageShell eyebrow="Product" title={<>The DEĞERIA <em>Transaction Passport.</em></>} intro="One structured, traceable representation of an industrial transaction — from evidence to outcome.">
     <section className="subpage-section"><div className="container">
-      {sections.map(s => <ProductSection key={s.n} n={s.n} title={s.title} body={s.body} />)}
+      {sections.map(s => <ProductSection key={s.n} n={s.n} title={s.title} body={s.body} id={s.id} />)}
       <div style={{ marginTop: 32 }}>
         <Link href="/evaluate" className="button button-primary">Bring a Transaction <ArrowUpRight size={16} /></Link>
       </div>
