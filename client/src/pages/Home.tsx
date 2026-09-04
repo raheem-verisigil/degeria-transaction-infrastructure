@@ -99,7 +99,7 @@ function SiteHeader() {
     document.documentElement.dir = currentLocale === "ar" ? "rtl" : "ltr";
   }, [currentLocale]);
   const links = [
-    ["Product", "/#passport"],
+    ["Product", "/product"],
     ["How it works", "/#mechanism"],
     ["Manufacturers", "/manufacturers"],
     ["Institutions", "/institutions"],
@@ -312,6 +312,26 @@ function AudiencesAndResearch() {
   return <section className="section audiences-section"><div className="container"><div className="split-heading"><div><SectionLabel index="15" light>Who it is for</SectionLabel><h2>Built for the people who carry the <em>economic decision.</em></h2></div><p>One shared transaction language across the manufacturer, the institution and the systems around them.</p></div><div className="audience-grid">{[{label: "MANUFACTURERS", icon: PanelTop, copy: "Understand the economics of important transactions before committing scarce working capital.", href: "/manufacturers"}, {label: "FINANCE & INSURANCE", icon: Scale, copy: "Receive structured, evidence-linked transaction information for institutional review.", href: "/institutions"}, {label: "INDUSTRIAL PARTNERS", icon: Network, copy: "Connect existing systems and evidence without replacing the manufacturer's core infrastructure.", href: "/technology"}].map(({ label, icon: Icon, copy, href }, index) => <Link href={href} key={label} className={`audience-object a-${index}`}><div><span className="object-number">0{index + 1}</span><Icon size={20} /></div><span className="card-eyebrow">{label}</span><h3>{copy}</h3><span className="object-link">Explore the pathway <ArrowUpRight size={15} /></span></Link>)}</div><div className="research-strip"><div><SectionLabel index="16" light>Research</SectionLabel><h2>Build the evidence around the infrastructure.</h2></div><div className="research-topics">{["Economic transaction infrastructure", "Manufacturing finance", "Trade evidence", "Industrial digitalization", "Transaction risk", "Economic decision intelligence"].map((topic, index) => <span key={topic}><b>0{index + 1}</b>{topic}<ArrowUpRight size={14} /></span>)}</div><ArrowLink href="/research" light>Explore research</ArrowLink></div></div></section>;
 }
 
+function ProductJourney() {
+  const steps = [
+    "Bring transaction evidence", "DEĞERIA reconstructs the transaction", "Transaction Passport is created",
+    "Evidence and provenance are mapped", "Economics and risk are assessed", "Readiness is evaluated",
+    "Transaction Evidence File is produced", "Decision and outcome can be recorded",
+  ];
+  return <section className="section" style={{ background: "#0d1219" }}><div className="container">
+    <SectionLabel index="16b" light>The product journey</SectionLabel>
+    <div className="split-heading"><h2 style={{ color: "#e6edf3" }}>From fragmented evidence to a <em>recorded outcome.</em></h2></div>
+    <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginTop: 24 }}>
+      {steps.map((step, i) => <div key={step} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: "10px 14px", fontSize: 13, color: "#e6edf3", whiteSpace: "nowrap" }}>
+          <span style={{ color: "#5f6b7a", marginRight: 8 }}>{i + 1}</span>{step}
+        </div>
+        {i < steps.length - 1 && <ArrowRight size={14} color="#5f6b7a" />}
+      </div>)}
+    </div>
+  </div></section>;
+}
+
 function FinalCTA() {
   return <section className="final-cta"><div className="final-glow" /><div className="container"><SectionLabel index="17" light>Start with the real thing</SectionLabel><h2>Bring us <em>one real transaction.</em></h2><p>We are validating DEĞERIA with Turkish manufacturers. Bring one significant import-to-production-to-export transaction and we will reconstruct the evidence, economics and readiness structure with you.</p><Link href="/evaluate" className="button button-primary">Build a Transaction Passport <ArrowUpRight size={16} /></Link><div className="cta-foot"><span>NO ERP REPLACEMENT REQUIRED</span><span>NO SENSITIVE DOCUMENTS ON FIRST CONTACT</span><span>DEMO MODE AVAILABLE</span></div></div></section>;
 }
@@ -321,7 +341,7 @@ function Footer() {
 }
 
 export default function Home() {
-  return <div className="site-shell"><SiteHeader /><main><Hero /><FragmentedEvidence /><Invention /><WhatDegeriaProduces /><ShowTheTransformation /><PassportSection /><Provenance /><EconomicGraph /><ScenarioSimulator /><Readiness /><InsuranceAndFile /><OutcomeMemory /><DecisionMemory /><PrincipleAndPositioning /><AudiencesAndResearch /><FinalCTA /></main><Footer /></div>;
+  return <div className="site-shell"><SiteHeader /><main><Hero /><FragmentedEvidence /><Invention /><WhatDegeriaProduces /><ShowTheTransformation /><PassportSection /><Provenance /><EconomicGraph /><ScenarioSimulator /><Readiness /><InsuranceAndFile /><OutcomeMemory /><DecisionMemory /><PrincipleAndPositioning /><AudiencesAndResearch /><ProductJourney /><FinalCTA /></main><Footer /></div>;
 }
 
 function SubpageShell({ eyebrow, title, intro, children }: { eyebrow: string; title: React.ReactNode; intro: string; children: React.ReactNode }) {
@@ -344,6 +364,41 @@ export function InstitutionsPage() {
 export function ResearchPage() {
   const topics = ["Economic Transaction Infrastructure", "Manufacturing Finance", "Trade Evidence", "Industrial Digitalization", "Transaction Risk", "Economic Decision Intelligence"];
   return <SubpageShell eyebrow="Research / 2026" title={<>The transaction is becoming the <em>unit of understanding.</em></>} intro="Architecture papers, pilot findings, anonymized transaction research and methodology for a new category of economic infrastructure."><section className="subpage-section"><div className="container"><div className="research-list">{topics.map((topic, i) => <article key={topic}><div><span className="object-number">0{i + 1}</span><span className="status-badge">METHODOLOGY</span></div><h3>{topic}</h3><p>Foundational notes on how evidence, economics, decisions and outcomes remain connected across a transaction lifecycle.</p><ArrowUpRight size={18} /></article>)}</div><div className="research-method"><div><SectionLabel index="01">Methodology</SectionLabel><h2>Credibility comes from <em>traceability.</em></h2></div><p>DEĞERIA avoids unsupported claims. Every output uses controlled status language: observed, calculated, assumed, predicted, recommended, decided and actual.</p></div></div></section></SubpageShell>;
+}
+
+function ProductSection({ n, title, body }: { n: string; title: string; body: string }) {
+  return <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", padding: "28px 0" }}>
+    <div style={{ display: "flex", gap: 20, alignItems: "flex-start", flexWrap: "wrap" }}>
+      <span style={{ fontSize: 13, color: "#5f6b7a", flex: "0 0 32px" }}>{n}</span>
+      <div style={{ flex: "1 1 320px" }}>
+        <h3 style={{ fontSize: 17, color: "#e6edf3", margin: "0 0 8px" }}>{title}</h3>
+        <p style={{ fontSize: 14, color: "#8b949e", lineHeight: 1.7, margin: 0 }}>{body}</p>
+      </div>
+    </div>
+  </div>;
+}
+
+export function ProductPage() {
+  const sections = [
+    { n: "01", title: "The problem", body: "The economic reality of an important transaction is distributed across a contract, a BOM, supplier quotes, import documents, production records, freight, an invoice, payment terms and receivable information. No single system holds the whole picture." },
+    { n: "02", title: "What the Passport is", body: "The Transaction Passport is a structured, evidence-linked representation of one transaction — commercial, import, production, export, financial and risk information connected in a single record, not scattered across documents." },
+    { n: "03", title: "Transaction lifecycle", body: "Import inputs, production, export, shipment, receivable and payment — the Passport follows the transaction through each stage, not just the order that starts it." },
+    { n: "04", title: "Evidence model", body: "Every piece of evidence is versioned and never silently overwritten. Evidence can be uploaded as a document or entered as structured data, and relationships between evidence items can be declared explicitly." },
+    { n: "05", title: "Economic model", body: "Revenue, cost, margin, cash requirement and FX exposure are calculated deterministically from stated inputs — the same inputs always produce the same output, and every number can be traced back to what produced it." },
+    { n: "06", title: "Risk and readiness", body: "Financeability readiness and insurance readiness are structured checklists for institutional review — never a credit rating, a loan approval, or an insurance underwriting decision." },
+    { n: "07", title: "Evidence file", body: "The Transaction Evidence File brings the transaction, its evidence and its assessment together as one exportable package — PDF or machine-readable JSON — labelled pre-verification until an actual verification standard exists." },
+    { n: "08", title: "Scenario analysis", body: "Explore transaction sensitivity — payment term changes, supplier cost movement, freight increases — as deterministic calculations under stated assumptions, not predictions." },
+    { n: "09", title: "Decision and outcome memory", body: "A system recommendation is recorded separately from the human decision that follows it. Later, the actual outcome is recorded too, so prediction and reality stay connected." },
+    { n: "10", title: "Bring a real transaction", body: "The first real proof is reconstruction, not another synthetic demo. Bring us one significant import-to-production-to-export transaction and we'll reconstruct the evidence, economics and readiness structure with you." },
+  ];
+  return <SubpageShell eyebrow="Product" title={<>The DEĞERIA <em>Transaction Passport.</em></>} intro="One structured, traceable representation of an industrial transaction — from evidence to outcome.">
+    <section className="subpage-section"><div className="container">
+      {sections.map(s => <ProductSection key={s.n} n={s.n} title={s.title} body={s.body} />)}
+      <div style={{ marginTop: 32 }}>
+        <Link href="/evaluate" className="button button-primary">Bring a Transaction <ArrowUpRight size={16} /></Link>
+      </div>
+    </div></section>
+  </SubpageShell>;
 }
 
 function StatusLayerCard({ title, body }: { title: string; body: string }) {
