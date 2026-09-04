@@ -122,3 +122,13 @@ html[dir="rtl"] .research-topics span, html[dir="rtl"] .footer-links, html[dir="
 .passport-intro-note small { color:#6687a3; }
 .sim-control-head .blue-badge { color:#1679b5; border-color:#91c5e7; max-width:230px; }
 @media (max-width:760px) { .hero-question { font-size:16px; } .sim-control-head { align-items:flex-start; gap:12px; } .sim-control-head .blue-badge { max-width:180px; text-align:right; } }
+.form-error { margin: 12px 0 0; padding: 12px 14px; border: 1px solid rgba(241,125,108,.45); background: rgba(241,125,108,.08); color: #ffd1ca; font-size: 12px; line-height: 1.5; }
+.transaction-chain { display:flex; align-items:center; gap:10px; margin-top:42px; padding:14px 0; border-top:1px solid rgba(104,151,197,.18); border-bottom:1px solid rgba(104,151,197,.18); overflow-x:auto; }
+.chain-stage { display:flex; align-items:center; gap:8px; flex:1 0 auto; color:#7893ad; font:9px 'DM Mono',monospace; letter-spacing:.07em; }
+.chain-stage span { color:#496b89; font-size:8px; }
+.chain-stage b { font-weight:500; white-space:nowrap; }
+.chain-stage svg { margin-left:auto; color:#42627e; }
+.chain-stage.highlight b { color:var(--teal); }
+@media (max-width:760px) { .transaction-chain { margin-top:28px; padding-bottom:12px; } .chain-stage { min-width:116px; } .chain-stage svg { display:none; } }
+.principle-note { max-width:760px; margin:24px 0 42px; color:#9fb4c9; font-size:17px; line-height:1.65; }
+@media (max-width:760px) { .principle-note { font-size:15px; margin-bottom:28px; } }
