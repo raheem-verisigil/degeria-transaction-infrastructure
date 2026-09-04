@@ -190,6 +190,35 @@ function WhatDegeriaProduces() {
   </div></section>;
 }
 
+function ShowTheTransformation() {
+  const before = ["Contract", "Purchase order", "BOM", "Supplier quotes", "Import documents", "Production records", "Freight quote", "Invoice", "Payment terms", "FX information"];
+  const after = ["Structured Transaction Passport", "Economic assessment", "Transaction Evidence File"];
+  return <section className="section" style={{ background: "#0b0f14" }}><div className="container">
+    <SectionLabel index="03c">One transaction. Too many fragments.</SectionLabel>
+    <div className="split-heading"><h2 style={{ color: "#e6edf3" }}>The economic reality of a transaction is distributed across documents, systems and stages. <em>DEĞERIA brings the pieces into one structured representation.</em></h2></div>
+    <div style={{ display: "flex", alignItems: "center", gap: 24, marginTop: 32, flexWrap: "wrap" }}>
+      <div style={{ flex: "1 1 260px", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: 20 }}>
+        <span style={{ fontSize: 12, color: "#5f6b7a" }}>BEFORE</span>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 12 }}>
+          {before.map(item => <span key={item} style={{ fontSize: 12, color: "#8b949e", background: "rgba(255,255,255,0.05)", borderRadius: 6, padding: "5px 10px" }}>{item}</span>)}
+        </div>
+      </div>
+      <div style={{ flex: "0 0 auto", display: "flex", flexDirection: "column", alignItems: "center", gap: 4, color: "#43d9c5" }}>
+        <ArrowRight size={22} />
+        <span style={{ fontSize: 11, color: "#5f6b7a", whiteSpace: "nowrap" }}>Economic Evidence Graph</span>
+      </div>
+      <div style={{ flex: "1 1 220px", background: "rgba(67,217,197,0.06)", border: "1px solid rgba(67,217,197,0.25)", borderRadius: 12, padding: 20 }}>
+        <span style={{ fontSize: 12, color: "#43d9c5" }}>AFTER</span>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 12 }}>
+          {after.map((item, i) => <div key={item} style={{ fontSize: 13, color: "#e6edf3", display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ fontSize: 11, color: "#5f6b7a" }}>{i + 1}</span>{item}
+          </div>)}
+        </div>
+      </div>
+    </div>
+  </div></section>;
+}
+
 function PassportSection() {
   const [active, setActive] = useState(evidenceTabs[0]);
   return <section className="section passport-section" id="passport"><div className="container"><div className="passport-intro"><div><SectionLabel index="04" light>DEĞERIA Transaction Passport</SectionLabel><h2>One transaction. One <em>structured representation.</em></h2></div><div className="passport-intro-note"><span className="live-dot" />ILLUSTRATIVE DEMO — SYNTHETIC TRANSACTION<br /><small>DGR-TRX-DEMO-001 · Client-side deterministic model</small></div></div><TransactionChain /><div className="passport-workspace"><div className="passport-main"><div className="passport-card"><div className="passport-card-head"><div><span className="card-eyebrow">TRANSACTION</span><h3>DGR-TRX-DEMO-001</h3></div><span className="status-badge blue-badge">EVIDENCE_REVIEW</span></div><div className="passport-card-grid"><div><span className="card-label">BUYER</span><strong>████████ Industries GmbH</strong></div><div><span className="card-label">ROUTE</span><strong>Germany <ArrowRight size={14} /> Türkiye</strong></div><Metric label="VALUE" value="€2,500,000" /><Metric label="PAYMENT" value="120 DAYS" accent="teal" /><Metric label="PRODUCTION" value="78%" accent="teal" /><Metric label="EVIDENCE" value="87%" note="11 / 13 objects" /></div><div className="passport-card-bottom"><span><span className="dot blue" />STATUS <b>ASSESSING</b></span><span><span className="dot teal" />UPDATED 03 SEP 2026 · 14:32 UTC</span></div></div><div className="passport-tabs" role="tablist" aria-label="Passport evidence categories">{evidenceTabs.map(tab => <button key={tab.id} role="tab" aria-selected={active.id === tab.id} className={active.id === tab.id ? "active" : ""} onClick={() => setActive(tab)}>{tab.label}</button>)}</div><div className="passport-insight"><div><span className="card-eyebrow">SELECTED EVIDENCE LAYER</span><h3>{active.value}</h3><p>{active.sub}</p></div><div className="insight-divider" /><div><span className="card-label">STATUS</span><strong className={`text-${active.color}`}>{active.status}</strong></div><div><span className="card-label">SOURCE</span><p>{active.id === "commercial" ? "Sales contract · clause 8.2" : active.id === "outcome" ? "Outcome record · settlement" : "Evidence object · reconciled"}</p></div><ArrowUpRight size={17} /></div></div><aside className="passport-aside"><div className="aside-label"><span>TRANSACTION STATE</span><span className="pulse-label"><i /> LIVE</span></div><div className="state-rail"><div className="state-item complete"><span>01</span><b>Evidence</b><small>87% linked</small></div><div className="rail-line filled" /><div className="state-item active"><span>02</span><b>Economic State</b><small>Calculating</small></div><div className="rail-line" /><div className="state-item"><span>03</span><b>Decision</b><small>Awaiting human input</small></div><div className="rail-line" /><div className="state-item"><span>04</span><b>Outcome</b><small>To be recorded</small></div></div><div className="aside-foot"><Sparkles size={15} /><span>One transaction. One evidence trail. One economic history.</span></div></aside></div></div></section>;
@@ -292,7 +321,7 @@ function Footer() {
 }
 
 export default function Home() {
-  return <div className="site-shell"><SiteHeader /><main><Hero /><FragmentedEvidence /><Invention /><WhatDegeriaProduces /><PassportSection /><Provenance /><EconomicGraph /><ScenarioSimulator /><Readiness /><InsuranceAndFile /><OutcomeMemory /><DecisionMemory /><PrincipleAndPositioning /><AudiencesAndResearch /><FinalCTA /></main><Footer /></div>;
+  return <div className="site-shell"><SiteHeader /><main><Hero /><FragmentedEvidence /><Invention /><WhatDegeriaProduces /><ShowTheTransformation /><PassportSection /><Provenance /><EconomicGraph /><ScenarioSimulator /><Readiness /><InsuranceAndFile /><OutcomeMemory /><DecisionMemory /><PrincipleAndPositioning /><AudiencesAndResearch /><FinalCTA /></main><Footer /></div>;
 }
 
 function SubpageShell({ eyebrow, title, intro, children }: { eyebrow: string; title: React.ReactNode; intro: string; children: React.ReactNode }) {
