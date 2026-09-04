@@ -169,6 +169,27 @@ function TransactionChain() {
   return <div className="transaction-chain" aria-label="Import to payment transaction chain">{stages.map((stage, index) => <div key={stage} className={index === 0 || index === 5 ? "chain-stage highlight" : "chain-stage"}><span>{String(index + 1).padStart(2, "0")}</span><b>{stage}</b>{index < stages.length - 1 && <ArrowRight size={15} />}</div>)}</div>;
 }
 
+function WhatDegeriaProduces() {
+  const products = [
+    { n: "01", icon: PanelTop, title: "Transaction Passport", body: "The structured representation of the transaction — commercial, import, production, export, financial and risk evidence, connected in one record." },
+    { n: "02", icon: CircleDollarSign, title: "Economic assessment", body: "Revenue, cost, margin, working-capital requirement, receivable exposure and FX exposure, calculated deterministically." },
+    { n: "03", icon: ShieldCheck, title: "Evidence and risk view", body: "Evidence provenance, completeness, inconsistencies, missing information, and buyer, supplier and logistics risk." },
+    { n: "04", icon: FileCheck2, title: "Transaction evidence file", body: "A structured output bringing the transaction, evidence and assessment together — for internal review or, in time, institutional review." },
+  ];
+  return <section className="section" style={{ background: "#0d1219" }}><div className="container">
+    <SectionLabel index="03b" light>What DEĞERIA produces</SectionLabel>
+    <div className="split-heading"><h2 style={{ color: "#e6edf3" }}>You give DEĞERIA the evidence. <em>Here is what you get back.</em></h2></div>
+    <div style={{ display: "flex", flexWrap: "wrap", gap: 16, marginTop: 24 }}>
+      {products.map(p => <div key={p.n} style={{ flex: "1 1 260px", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: 20 }}>
+        <span style={{ fontSize: 12, color: "#5f6b7a" }}>{p.n}</span>
+        <p.icon size={20} color="#43d9c5" style={{ display: "block", margin: "8px 0 12px" }} />
+        <h3 style={{ fontSize: 16, color: "#e6edf3", margin: "0 0 8px" }}>{p.title}</h3>
+        <p style={{ fontSize: 13, color: "#8b949e", lineHeight: 1.6, margin: 0 }}>{p.body}</p>
+      </div>)}
+    </div>
+  </div></section>;
+}
+
 function PassportSection() {
   const [active, setActive] = useState(evidenceTabs[0]);
   return <section className="section passport-section" id="passport"><div className="container"><div className="passport-intro"><div><SectionLabel index="04" light>DEĞERIA Transaction Passport</SectionLabel><h2>One transaction. One <em>structured representation.</em></h2></div><div className="passport-intro-note"><span className="live-dot" />ILLUSTRATIVE DEMO — SYNTHETIC TRANSACTION<br /><small>DGR-TRX-DEMO-001 · Client-side deterministic model</small></div></div><TransactionChain /><div className="passport-workspace"><div className="passport-main"><div className="passport-card"><div className="passport-card-head"><div><span className="card-eyebrow">TRANSACTION</span><h3>DGR-TRX-DEMO-001</h3></div><span className="status-badge blue-badge">EVIDENCE_REVIEW</span></div><div className="passport-card-grid"><div><span className="card-label">BUYER</span><strong>████████ Industries GmbH</strong></div><div><span className="card-label">ROUTE</span><strong>Germany <ArrowRight size={14} /> Türkiye</strong></div><Metric label="VALUE" value="€2,500,000" /><Metric label="PAYMENT" value="120 DAYS" accent="teal" /><Metric label="PRODUCTION" value="78%" accent="teal" /><Metric label="EVIDENCE" value="87%" note="11 / 13 objects" /></div><div className="passport-card-bottom"><span><span className="dot blue" />STATUS <b>ASSESSING</b></span><span><span className="dot teal" />UPDATED 03 SEP 2026 · 14:32 UTC</span></div></div><div className="passport-tabs" role="tablist" aria-label="Passport evidence categories">{evidenceTabs.map(tab => <button key={tab.id} role="tab" aria-selected={active.id === tab.id} className={active.id === tab.id ? "active" : ""} onClick={() => setActive(tab)}>{tab.label}</button>)}</div><div className="passport-insight"><div><span className="card-eyebrow">SELECTED EVIDENCE LAYER</span><h3>{active.value}</h3><p>{active.sub}</p></div><div className="insight-divider" /><div><span className="card-label">STATUS</span><strong className={`text-${active.color}`}>{active.status}</strong></div><div><span className="card-label">SOURCE</span><p>{active.id === "commercial" ? "Sales contract · clause 8.2" : active.id === "outcome" ? "Outcome record · settlement" : "Evidence object · reconciled"}</p></div><ArrowUpRight size={17} /></div></div><aside className="passport-aside"><div className="aside-label"><span>TRANSACTION STATE</span><span className="pulse-label"><i /> LIVE</span></div><div className="state-rail"><div className="state-item complete"><span>01</span><b>Evidence</b><small>87% linked</small></div><div className="rail-line filled" /><div className="state-item active"><span>02</span><b>Economic State</b><small>Calculating</small></div><div className="rail-line" /><div className="state-item"><span>03</span><b>Decision</b><small>Awaiting human input</small></div><div className="rail-line" /><div className="state-item"><span>04</span><b>Outcome</b><small>To be recorded</small></div></div><div className="aside-foot"><Sparkles size={15} /><span>One transaction. One evidence trail. One economic history.</span></div></aside></div></div></section>;
@@ -267,11 +288,11 @@ function FinalCTA() {
 }
 
 function Footer() {
-  return <footer className="footer"><div className="container"><div className="footer-top"><div><BrandMark /><p>Economic Transaction<br />Infrastructure</p></div><div className="footer-links"><div><span>Explore</span><a href="#passport">Product</a><a href="#mechanism">How it works</a><a href="/manufacturers">Manufacturers</a><a href="/institutions">Institutions</a><a href="/technology">Technology</a><a href="/research">Research</a></div><div><span>Company</span><a href="/evaluate">Contact</a><a href="/evaluate">Careers</a></div><div><span>Legal</span><a href="#top">Privacy</a><a href="#top">Terms</a><a href="#top">Security</a></div></div></div><div className="footer-bottom"><span>© 2026 DEĞERIA</span><span className="footer-status"><i />DEMO INFRASTRUCTURE · v0.1</span></div><p className="footer-disclaimer">DEĞERIA provides technology, evidence, analytical and decision-support services. It does not itself provide banking, insurance, lending, customs, tax or regulated financial services unless separately authorized.</p></div></footer>;
+  return <footer className="footer"><div className="container"><div className="footer-top"><div><BrandMark /><p>Economic Transaction<br />Infrastructure</p></div><div className="footer-links"><div><span>Explore</span><a href="#passport">Product</a><a href="#mechanism">How it works</a><a href="/manufacturers">Manufacturers</a><a href="/institutions">Institutions</a><a href="/technology">Technology</a><a href="/research">Research</a></div><div><span>Company</span><a href="/status">System status</a><a href="/evaluate">Contact</a><a href="/evaluate">Careers</a></div><div><span>Legal</span><a href="#top">Privacy</a><a href="#top">Terms</a><a href="#top">Security</a></div></div></div><div className="footer-bottom"><span>© 2026 DEĞERIA</span><span className="footer-status"><i />DEMO INFRASTRUCTURE · v0.1</span></div><p className="footer-disclaimer">DEĞERIA provides technology, evidence, analytical and decision-support services. It does not itself provide banking, insurance, lending, customs, tax or regulated financial services unless separately authorized.</p></div></footer>;
 }
 
 export default function Home() {
-  return <div className="site-shell"><SiteHeader /><main><Hero /><FragmentedEvidence /><Invention /><PassportSection /><Provenance /><EconomicGraph /><ScenarioSimulator /><Readiness /><InsuranceAndFile /><OutcomeMemory /><DecisionMemory /><PrincipleAndPositioning /><AudiencesAndResearch /><FinalCTA /></main><Footer /></div>;
+  return <div className="site-shell"><SiteHeader /><main><Hero /><FragmentedEvidence /><Invention /><WhatDegeriaProduces /><PassportSection /><Provenance /><EconomicGraph /><ScenarioSimulator /><Readiness /><InsuranceAndFile /><OutcomeMemory /><DecisionMemory /><PrincipleAndPositioning /><AudiencesAndResearch /><FinalCTA /></main><Footer /></div>;
 }
 
 function SubpageShell({ eyebrow, title, intro, children }: { eyebrow: string; title: React.ReactNode; intro: string; children: React.ReactNode }) {
@@ -294,6 +315,76 @@ export function InstitutionsPage() {
 export function ResearchPage() {
   const topics = ["Economic Transaction Infrastructure", "Manufacturing Finance", "Trade Evidence", "Industrial Digitalization", "Transaction Risk", "Economic Decision Intelligence"];
   return <SubpageShell eyebrow="Research / 2026" title={<>The transaction is becoming the <em>unit of understanding.</em></>} intro="Architecture papers, pilot findings, anonymized transaction research and methodology for a new category of economic infrastructure."><section className="subpage-section"><div className="container"><div className="research-list">{topics.map((topic, i) => <article key={topic}><div><span className="object-number">0{i + 1}</span><span className="status-badge">METHODOLOGY</span></div><h3>{topic}</h3><p>Foundational notes on how evidence, economics, decisions and outcomes remain connected across a transaction lifecycle.</p><ArrowUpRight size={18} /></article>)}</div><div className="research-method"><div><SectionLabel index="01">Methodology</SectionLabel><h2>Credibility comes from <em>traceability.</em></h2></div><p>DEĞERIA avoids unsupported claims. Every output uses controlled status language: observed, calculated, assumed, predicted, recommended, decided and actual.</p></div></div></section></SubpageShell>;
+}
+
+function StatusLayerCard({ title, body }: { title: string; body: string }) {
+  return <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "16px", flex: "1 1 220px" }}>
+    <h3 style={{ fontSize: 14, margin: "0 0 8px", color: "#e6edf3" }}>{title}</h3>
+    <p style={{ fontSize: 12.5, color: "#8b949e", margin: "0 0 10px", lineHeight: 1.5 }}>{body}</p>
+    <span style={{ fontSize: 12, color: "#43d9c5" }}><Check size={12} style={{ verticalAlign: -1, marginRight: 4 }} />Live</span>
+  </div>;
+}
+
+function StatusCapabilityCard({ title, body }: { title: string; body: string }) {
+  return <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "14px", flex: "1 1 220px" }}>
+    <p style={{ fontSize: 13.5, fontWeight: 600, margin: "0 0 4px", color: "#e6edf3" }}>{title}</p>
+    <p style={{ fontSize: 12, color: "#8b949e", margin: 0, lineHeight: 1.5 }}>{body}</p>
+  </div>;
+}
+
+export function StatusPage() {
+  const layers = [
+    { title: "1. User access", body: "değeria.com over HTTPS, 8 locales, public routes for manufacturers, institutions, technology, evaluate." },
+    { title: "2. Frontend", body: "React 19, Vite, TypeScript. Deployed via GitHub Pages, built by GitHub Actions." },
+    { title: "3. API and backend", body: "Python, FastAPI, on Railway. Modular domain layer, admin plus per-organization keys." },
+    { title: "4. Data layer", body: "PostgreSQL on Railway. Organizations, transactions, events, evidence files." },
+  ];
+  const checks = [
+    "Organization-scoped data, re-checked on every read",
+    "Hashed API keys, admin plus per-org",
+    "Upload type and size validation",
+    "Rate limiting on public endpoints",
+  ];
+  const capabilities = [
+    { title: "Transaction passport", body: "Assembled view of economics, evidence, decision, outcome." },
+    { title: "Evidence and provenance", body: "Versioned evidence, declared relationships between items." },
+    { title: "Economics engine", body: "Deterministic margin, cost, and cash requirement." },
+    { title: "Readiness checks", body: "Financeability and insurance readiness. Not an approval." },
+    { title: "Evidence package", body: "PDF and JSON export. Pre-verification, not yet \"verified\"." },
+    { title: "Decision and outcome", body: "Recommendation kept separate from human decision." },
+  ];
+  return <SubpageShell eyebrow="System status" title={<>Verified <em>end to end.</em></>} intro="Domain, frontend, API and database — confirmed together with a real submission, not assumed from each piece working in isolation.">
+    <section className="subpage-section"><div className="container">
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 14, marginBottom: 16 }}>
+        {layers.map(l => <StatusLayerCard key={l.title} title={l.title} body={l.body} />)}
+      </div>
+
+      <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: 16, marginBottom: 24 }}>
+        <h3 style={{ fontSize: 14, margin: "0 0 12px", color: "#e6edf3" }}>Security and tenant isolation</h3>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+          {checks.map(c => <div key={c} style={{ fontSize: 12.5, color: "#8b949e", flex: "1 1 220px" }}><Check size={12} style={{ color: "#43d9c5", verticalAlign: -1, marginRight: 4 }} />{c}</div>)}
+        </div>
+      </div>
+
+      <h3 style={{ fontSize: 14, margin: "0 0 12px", color: "#e6edf3" }}>Core product capabilities</h3>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginBottom: 24 }}>
+        {capabilities.map(c => <StatusCapabilityCard key={c.title} title={c.title} body={c.body} />)}
+      </div>
+
+      <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: 16, marginBottom: 8 }}>
+        <h3 style={{ fontSize: 14, margin: "0 0 10px", color: "#e6edf3" }}>Verified lead flow</h3>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", fontSize: 12.5, color: "#8b949e" }}>
+          <span>Form on değeria.com</span><ArrowRight size={13} />
+          <span>API receives it</span><ArrowRight size={13} />
+          <span>Saved to PostgreSQL</span><ArrowRight size={13} />
+          <span>Visible in leads dashboard</span><ArrowRight size={13} />
+          <span>Email notification sent</span>
+        </div>
+      </div>
+
+      <p style={{ fontSize: 12, color: "#5f6b7a" }}>Backend: Python, FastAPI, PostgreSQL, on Railway. Frontend: React, Vite, TypeScript, on GitHub Pages.</p>
+    </div></section>
+  </SubpageShell>;
 }
 
 export function EvaluatePage() {

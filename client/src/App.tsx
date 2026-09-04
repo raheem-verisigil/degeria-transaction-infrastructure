@@ -3,8 +3,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
-import Home, { EvaluatePage, InstitutionsPage, ManufacturersPage, ResearchPage, TechnologyPage } from "./pages/Home";
-
+import Home, { EvaluatePage, InstitutionsPage, ManufacturersPage, ResearchPage, StatusPage, TechnologyPage } from "./pages/Home";
 function Router() {
   return (
     <Switch>
@@ -21,12 +20,12 @@ function Router() {
       <Route path="/manufacturers" component={ManufacturersPage} />
       <Route path="/institutions" component={InstitutionsPage} />
       <Route path="/research" component={ResearchPage} />
+      <Route path="/status" component={StatusPage} />
       <Route path="/evaluate" component={EvaluatePage} />
       <Route component={Home} />
     </Switch>
   );
 }
-
 export default function App() {
   return (
     <ErrorBoundary>
