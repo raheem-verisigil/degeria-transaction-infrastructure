@@ -1,5 +1,6 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "wouter";
+import axios from "axios";
 import {
   ArrowDown,
   ArrowRight,
@@ -25,6 +26,18 @@ import {
 
 const blue = "#2d7dff";
 const teal = "#43d9c5";
+
+// Backend API base. Set VITE_API_BASE_URL in your build environment once
+// the final domain/deployment is settled; falls back to the live Railway
+// backend so this works today with no extra config.
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://degeria-api-production.up.railway.app";
+
+// Form's transaction-type labels -> backend's TransactionType enum values.
+const transactionTypeMap: Record<string, string> = {
+  "Import-linked export": "IMPORT_LINKED_EXPORT",
+  "Export": "EXPORT",
+  "Import": "IMPORT",
+};
 
 const supportedLocales = ["en", "tr", "ar", "de", "it", "zh", "fr", "pt"] as const;
 type Locale = (typeof supportedLocales)[number];
@@ -190,7 +203,7 @@ function Readiness() {
 }
 
 function InsuranceAndFile() {
-  return <section className="section light-surface"><div className="container"><div className="insurance-grid"><div className="insurance-copy"><SectionLabel index="09">Insurance readiness</SectionLabel><h2>Make risk visible before asking someone else to <em>carry it.</em></h2><p>Structure the transaction context, evidence index and known gaps for an informed review. Not an approval.</p><div className="risk-object"><div className="risk-line"><span>BUYER</span><b>Germany</b></div><div className="risk-line"><span>PAYMENT</span><b>120 days</b></div><div className="risk-line"><span>VALUE</span><b>€2.5M</b></div><div className="risk-line"><span>EVIDENCE</span><b className="text-teal">87%</b></div><div className="risk-readiness"><ShieldCheck size={16} /><span>INSURANCE INFORMATION</span><b>READY FOR REVIEW</b></div></div><ArrowLink href="/evaluate">Build the transaction file</ArrowLink></div><div className="evidence-file-wrap"><SectionLabel index="10">Institutional evidence output</SectionLabel><h2>One transaction. One <em>evidence file.</em></h2><div className="evidence-file"><div className="file-header"><BrandMark /><span>TRANSACTION EVIDENCE FILE<br /><small>PRE-VERIFICATION DEMO</small></span></div><div className="file-title"><span>DGR-TRX-DEMO-001</span><b>87%</b></div><div className="file-items">{["COMMERCIAL", "PRODUCTION", "QUALITY", "EXPORT", "PAYMENT TERMS", "FINANCIAL POSITION", "RISK"].map(item => <span key={item}><CheckCircle2 size={13} />{item}<b>✓</b></span>)}</div><div className="file-footer"><span>EVIDENCE INDEX <b>87%</b></span><span>EXCEPTIONS <b>02</b></span><span>PROVENANCE <b className="text-teal">COMPLETE</b></span></div></div><small className="file-note">This demonstration is labelled a Transaction Evidence File. “Verified Export Asset File” will be used only after verification standards are established.</small></div></div></div></section>;
+  return <section className="section light-surface"><div className="container"><div className="insurance-grid"><div className="insurance-copy"><SectionLabel index="09">Insurance readiness</SectionLabel><h2>Make risk visible before asking someone else to <em>carry it.</em></h2><p>Structure the transaction context, evidence index and known gaps for an informed review. Not an approval.</p><div className="risk-object"><div className="risk-line"><span>BUYER</span><b>Germany</b></div><div className="risk-line"><span>PAYMENT</span><b>120 days</b></div><div className="risk-line"><span>VALUE</span><b>€2.5M</b></div><div className="risk-line"><span>EVIDENCE</span><b className="text-teal">87%</b></div><div className="risk-readiness"><ShieldCheck size={16} /><span>INSURANCE INFORMATION</span><b>READY FOR REVIEW</b></div></div><ArrowLink href="/evaluate">Build the transaction file</ArrowLink></div><div className="evidence-file-wrap"><SectionLabel index="10">Institutional evidence output</SectionLabel><h2>One transaction. One <em>evidence file.</em></h2><div className="evidence-file"><div className="file-header"><BrandMark /><span>TRANSACTION EVIDENCE FILE<br /><small>PRE-VERIFICATION DEMO</small></span></div><div className="file-title"><span>DGR-TRX-DEMO-001</span><b>87%</b></div><div className="file-items">{["COMMERCIAL", "PRODUCTION", "QUALITY", "EXPORT", "PAYMENT TERMS", "FINANCIAL POSITION", "RISK"].map(item => <span key={item}><CheckCircle2 size={13} />{item}<b>✓</b></span>)}</div><div className="file-footer"><span>EVIDENCE INDEX <b>87%</b></span><span>EXCEPTIONS <b>02</b></span><span>PROVENANCE <b className="text-teal">COMPLETE</b></span></div></div><small className="file-note">This demonstration is labelled a Transaction Evidence File. "Verified Export Asset File" will be used only after verification standards are established.</small></div></div></div></section>;
 }
 
 function OutcomeMemory() {
@@ -245,9 +258,36 @@ export function ResearchPage() {
 
 export function EvaluatePage() {
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [selected, setSelected] = useState<string[]>(["Margin"]);
   const options = ["Margin", "Cash requirement", "FX exposure", "Buyer/payment risk", "Financing readiness", "Insurance readiness", "Evidence gaps", "Other"];
   const toggle = (item: string) => setSelected(prev => prev.includes(item) ? prev.filter(x => x !== item) : [...prev, item]);
-  const submit = (e: FormEvent<HTMLFormElement>) => { e.preventDefault(); setSubmitted(true); };
-  return <SubpageShell eyebrow="Pilot evaluation" title={<>Bring us one <em>real transaction.</em></>} intro="We are validating DEĞERIA with manufacturers using real economic transactions—not hypothetical demos."><section className="subpage-section evaluate-section"><div className="container"><div className="evaluate-layout"><div className="evaluate-aside"><span className="card-eyebrow">DEĞERIA / PILOT 001</span><h2>Start with the question behind the <em>transaction.</em></h2><p>Do not send sensitive documents on the first form. After contact, secure document exchange can be established.</p><div className="evaluate-stats"><Metric label="MODEL" value="DGR-TRX-DEMO-001" /><Metric label="MODE" value="DEMO + PILOT" accent="teal" /><Metric label="RESPONSE" value="HUMAN REVIEW" /></div></div>{submitted ? <div className="success-panel"><CheckCircle2 size={30} /><span className="card-eyebrow">REQUEST RECEIVED</span><h2>We’ll review the transaction context with you.</h2><p>Your first step is a conversation—not a document upload. The DEĞERIA team will follow up using the contact details provided.</p><Link href="/" className="button button-primary">Return to the infrastructure <ArrowRight size={16} /></Link></div> : <form className="evaluate-form" onSubmit={submit}><div className="form-grid"><label>Company<input required name="company" placeholder="Your company" /></label><label>Country<select name="country" defaultValue=""><option value="" disabled>Select country</option><option>Türkiye</option><option>Germany</option><option>United Kingdom</option><option>Other</option></select></label><label>Industry<input name="industry" placeholder="e.g. industrial equipment" /></label><label>Transaction type<select name="type" defaultValue=""><option value="" disabled>Select type</option><option>Import-linked export</option><option>Export</option><option>Import</option></select></label><label>Approximate transaction size<input name="size" placeholder="e.g. €2.5M" /></label><label>Payment term<input name="payment" placeholder="e.g. 120 days" /></label></div><fieldset><legend>What do you want to understand?</legend><div className="checkbox-grid">{options.map(item => <button type="button" key={item} className={selected.includes(item) ? "checked" : ""} onClick={() => toggle(item)}><span>{selected.includes(item) && <Check size={12} />}</span>{item}</button>)}</div></fieldset><button type="submit" className="button button-primary submit-button">Request a transaction evaluation <ArrowUpRight size={16} /></button><p className="form-disclaimer">By submitting, you are requesting an exploratory conversation. This is not a financing, insurance or eligibility application.</p></form>}</div></div></section></SubpageShell>;
+
+  const submit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError(null);
+    const form = new FormData(e.currentTarget);
+    const typeLabel = String(form.get("type") || "");
+
+    setSubmitting(true);
+    try {
+      await axios.post(`${API_BASE_URL}/api/v1/evaluation-requests`, {
+        company: String(form.get("company") || ""),
+        country: String(form.get("country") || "") || null,
+        industry: String(form.get("industry") || "") || null,
+        transaction_type: transactionTypeMap[typeLabel] || "EXPORT",
+        transaction_size: String(form.get("size") || "") || null,
+        payment_term: String(form.get("payment") || "") || null,
+        focus_areas: selected,
+      });
+      setSubmitted(true);
+    } catch (err) {
+      setError("We couldn't submit this right now. Please try again in a moment, or reach out directly.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return <SubpageShell eyebrow="Pilot evaluation" title={<>Bring us one <em>real transaction.</em></>} intro="We are validating DEĞERIA with manufacturers using real economic transactions—not hypothetical demos."><section className="subpage-section evaluate-section"><div className="container"><div className="evaluate-layout"><div className="evaluate-aside"><span className="card-eyebrow">DEĞERIA / PILOT 001</span><h2>Start with the question behind the <em>transaction.</em></h2><p>Do not send sensitive documents on the first form. After contact, secure document exchange can be established.</p><div className="evaluate-stats"><Metric label="MODEL" value="DGR-TRX-DEMO-001" /><Metric label="MODE" value="DEMO + PILOT" accent="teal" /><Metric label="RESPONSE" value="HUMAN REVIEW" /></div></div>{submitted ? <div className="success-panel"><CheckCircle2 size={30} /><span className="card-eyebrow">REQUEST RECEIVED</span><h2>We'll review the transaction context with you.</h2><p>Your first step is a conversation—not a document upload. The DEĞERIA team will follow up using the contact details provided.</p><Link href="/" className="button button-primary">Return to the infrastructure <ArrowRight size={16} /></Link></div> : <form className="evaluate-form" onSubmit={submit}><div className="form-grid"><label>Company<input required name="company" placeholder="Your company" /></label><label>Country<select name="country" defaultValue=""><option value="" disabled>Select country</option><option>Türkiye</option><option>Germany</option><option>United Kingdom</option><option>Other</option></select></label><label>Industry<input name="industry" placeholder="e.g. industrial equipment" /></label><label>Transaction type<select name="type" defaultValue=""><option value="" disabled>Select type</option><option>Import-linked export</option><option>Export</option><option>Import</option></select></label><label>Approximate transaction size<input name="size" placeholder="e.g. €2.5M" /></label><label>Payment term<input name="payment" placeholder="e.g. 120 days" /></label></div><fieldset><legend>What do you want to understand?</legend><div className="checkbox-grid">{options.map(item => <button type="button" key={item} className={selected.includes(item) ? "checked" : ""} onClick={() => toggle(item)}><span>{selected.includes(item) && <Check size={12} />}</span>{item}</button>)}</div></fieldset>{error && <p className="form-disclaimer" style={{ color: "#e5484d" }}>{error}</p>}<button type="submit" className="button button-primary submit-button" disabled={submitting}>{submitting ? "Submitting..." : "Request a transaction evaluation"} <ArrowUpRight size={16} /></button><p className="form-disclaimer">By submitting, you are requesting an exploratory conversation. This is not a financing, insurance or eligibility application.</p></form>}</div></div></section></SubpageShell>;
 }
