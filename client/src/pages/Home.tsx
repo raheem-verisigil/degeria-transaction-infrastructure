@@ -192,10 +192,44 @@ function ScenarioSimulator() {
   const [days, setDays] = useState(60);
   const [supplier, setSupplier] = useState(false);
   const [freight, setFreight] = useState(false);
-  const cash = days === 60 ? "€410K" : days === 90 ? "€520K" : "€640K";
-  const margin = supplier && freight ? "8.7%" : supplier ? "11.8%" : freight ? "10.4%" : "14.1%";
-  const assessment = days === 120 || supplier || freight ? "RESTRUCTURE" : "PROCEED TO REVIEW";
-  return <section className="section simulator-section"><div className="container"><div className="split-heading"><div><SectionLabel index="07">Before commitment</SectionLabel><h2>See the transaction before it becomes a <em>problem.</em></h2></div><p>Change assumptions and see the economic consequences before scarce working capital is committed.</p></div><div className="simulator"><div className="sim-control"><div className="sim-control-head"><span>SCENARIO ENGINE <span className="version">v0.1</span></span><span className="status-badge blue-badge">ILLUSTRATIVE DEMO · SYNTHETIC DATA</span></div><div className="sim-base"><Metric label="ORDER" value="€2.5M" /><Metric label="MARGIN" value={margin} accent={margin === "14.1%" ? "teal" : "coral"} /><Metric label="PAYMENT" value={`${days} DAYS`} accent="teal" /><Metric label="CASH NEED" value={cash} /></div><div className="slider-block"><div className="slider-title"><span>Payment term</span><strong>{days} days</strong></div><input type="range" min="60" max="120" step="30" value={days} onChange={e => setDays(Number(e.target.value))} aria-label="Payment term" /><div className="slider-labels"><span>60</span><span>90</span><span>120</span></div></div><div className="toggles"><button className={supplier ? "on" : ""} onClick={() => setSupplier(!supplier)}><span className="toggle-box">{supplier && <Check size={12} />}</span><span>Supplier cost +5%</span><small>{supplier ? "11.8% margin" : "No change"}</small></button><button className={freight ? "on" : ""} onClick={() => setFreight(!freight)}><span className="toggle-box">{freight && <Check size={12} />}</span><span>Freight +20%</span><small>{freight ? "10.4% margin" : "No change"}</small></button></div></div><div className="assessment"><div className="assessment-orbit"><div className="assessment-ring"><span>{margin}</span><small>PROJECTED<br />MARGIN</small></div></div><div className="assessment-copy"><span className="card-eyebrow">DEĞERIA ASSESSMENT</span><h3>{assessment}</h3><p>Primary drivers detected in the current model.</p><div className="driver-list"><span><i />payment exposure</span><span><i />supplier cost sensitivity</span><span><i />freight sensitivity</span></div><div className="recommendation"><span>Possible action</span><b>{assessment === "RESTRUCTURE" ? "Renegotiate payment terms or adjust price" : "Proceed to evidence review"}</b></div></div></div></div><p className="disclaimer">Decision support only. Final commercial, financial and institutional decisions remain with authorized parties.</p></div></section>;
+  const [result, setResult] = useState<{ marginPct: number; cash: number; assessment: string } | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [offline, setOffline] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    const timer = setTimeout(async () => {
+      setLoading(true);
+      try {
+        const { data } = await axios.post(`${API_BASE_URL}/api/v1/public/scenario-demo`, {
+          payment_days: days,
+          supplier_increase: supplier,
+          freight_increase: freight,
+        });
+        if (!cancelled) {
+          setResult({
+            marginPct: data.margin_percentage.value,
+            cash: data.cash_requirement.value,
+            assessment: data.assessment,
+          });
+          setOffline(false);
+        }
+      } catch (err) {
+        if (!cancelled) setOffline(true);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }, 300); // debounce rapid slider/toggle changes
+    return () => { cancelled = true; clearTimeout(timer); };
+  }, [days, supplier, freight]);
+
+  const formatEUR = (v: number) => `€${(v / 1000).toFixed(0)}K`;
+  const marginLabel = result ? `${result.marginPct.toFixed(1)}%` : "—";
+  const cashLabel = result ? formatEUR(result.cash) : "—";
+  const assessment = result?.assessment ?? "PROCEED TO REVIEW";
+  const isBaseline = !supplier && !freight && days === 60;
+
+  return <section className="section simulator-section"><div className="container"><div className="split-heading"><div><SectionLabel index="07">Before commitment</SectionLabel><h2>See the transaction before it becomes a <em>problem.</em></h2></div><p>Change assumptions and see the economic consequences before scarce working capital is committed.</p></div><div className="simulator"><div className="sim-control"><div className="sim-control-head"><span>SCENARIO ENGINE <span className="version">v0.1</span></span><span className="status-badge blue-badge">{offline ? "OFFLINE · SHOWING LAST KNOWN VALUES" : "LIVE CALCULATION · ILLUSTRATIVE BASE CASE"}</span></div><div className="sim-base"><Metric label="ORDER" value="€2.5M" /><Metric label="MARGIN" value={marginLabel} accent={isBaseline ? "teal" : "coral"} /><Metric label="PAYMENT" value={`${days} DAYS`} accent="teal" /><Metric label="CASH NEED" value={cashLabel} /></div><div className="slider-block"><div className="slider-title"><span>Payment term</span><strong>{days} days</strong></div><input type="range" min="60" max="120" step="30" value={days} onChange={e => setDays(Number(e.target.value))} aria-label="Payment term" /><div className="slider-labels"><span>60</span><span>90</span><span>120</span></div></div><div className="toggles"><button className={supplier ? "on" : ""} onClick={() => setSupplier(!supplier)}><span className="toggle-box">{supplier && <Check size={12} />}</span><span>Supplier cost +5%</span><small>{loading ? "Calculating..." : supplier ? `${marginLabel} margin` : "No change"}</small></button><button className={freight ? "on" : ""} onClick={() => setFreight(!freight)}><span className="toggle-box">{freight && <Check size={12} />}</span><span>Freight +20%</span><small>{loading ? "Calculating..." : freight ? `${marginLabel} margin` : "No change"}</small></button></div></div><div className="assessment"><div className="assessment-orbit"><div className="assessment-ring"><span>{marginLabel}</span><small>PROJECTED<br />MARGIN</small></div></div><div className="assessment-copy"><span className="card-eyebrow">DEĞERIA ASSESSMENT</span><h3>{assessment}</h3><p>Primary drivers detected in the current model.</p><div className="driver-list"><span><i />payment exposure</span><span><i />supplier cost sensitivity</span><span><i />freight sensitivity</span></div><div className="recommendation"><span>Possible action</span><b>{assessment === "RESTRUCTURE" ? "Renegotiate payment terms or adjust price" : "Proceed to evidence review"}</b></div></div></div></div><p className="disclaimer">Decision support only. Final commercial, financial and institutional decisions remain with authorized parties.</p></div></section>;
 }
 
 function Readiness() {
