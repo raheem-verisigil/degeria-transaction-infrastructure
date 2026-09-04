@@ -57,15 +57,15 @@ export const DEMO_TRANSACTION: TransactionPassport = {
   ],
 };
 
-const API_BASE_URL = (import.meta.env.VITE_DEGERIA_API_BASE_URL as string | undefined)?.replace(/\/$/, "");
+const API_BASE_URL = ((import.meta.env.VITE_DEGERIA_API_BASE_URL as string | undefined) || (import.meta.env.VITE_API_BASE_URL as string | undefined) || "https://degeria-api-production.up.railway.app").replace(/\/$/, "");
 
 export async function submitEvaluation(request: EvaluationRequest): Promise<EvaluationResult> {
   if (!API_BASE_URL) return { ok: false, mode: "demo", reason: "No DEĞERIA API base URL configured" };
   try {
-    const response = await fetch(`${API_BASE_URL}/api/v1/evaluations`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/evaluation-requests`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(request),
+      body: JSON.stringify({ company: request.company, country: request.country || null, industry: request.industry || null, transaction_type: request.transactionType || "EXPORT", transaction_size: request.transactionSize || null, payment_term: request.paymentTerm || null, focus_areas: request.objectives }),
     });
     if (!response.ok) return { ok: false, mode: "demo", reason: `API responded with ${response.status}` };
     return { ok: true, mode: "api" };
