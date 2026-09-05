@@ -40,6 +40,24 @@ const transactionTypeMap: Record<string, string> = {
 };
 
 const supportedLocales = ["en", "tr", "ar", "de", "it", "zh", "fr", "pt"] as const;
+const siteOrigin = "https://degeria.com";
+function upsertMeta(selector: string, attribute: string, value: string, content: string) {
+  let element = document.head.querySelector<HTMLMetaElement>(selector);
+  if (!element) { element = document.createElement("meta"); element.setAttribute(attribute, value); document.head.appendChild(element); }
+  element.setAttribute("content", content);
+}
+function updatePageMetadata(locale: Locale, path: string) {
+  const turkish = locale === "tr";
+  document.title = turkish ? "DEĞERIA | Türkiye'deki ihracatçı üreticiler için ekonomik işlem altyapısı" : "DEĞERIA | Economic Transaction Infrastructure for Manufacturers and Exporters";
+  upsertMeta('meta[name="description"]', "name", "description", turkish ? "DEĞERIA, Türkiye'deki ihracatçı üreticilerin ithalat, üretim, ihracat, sevkiyat, alacak ve ödeme kanıtlarını yapılandırılmış bir İşlem Pasaportunda birleştirir." : "DEĞERIA turns fragmented industrial, trade, production and financial evidence into a structured Transaction Passport.");
+  upsertMeta('meta[name="robots"]', "name", "robots", "index,follow");
+  let canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+  if (!canonical) { canonical = document.createElement("link"); canonical.rel = "canonical"; document.head.appendChild(canonical); }
+  canonical.href = `${siteOrigin}${path === "/" ? "" : path}`;
+  document.head.querySelectorAll('link[rel="alternate"][hreflang]').forEach(link => link.remove());
+  [["en", path.startsWith("/tr") ? "/en" : path], ["tr", path.startsWith("/tr") ? path : "/tr"], ["x-default", path.startsWith("/tr") ? "/en" : path]].forEach(([lang, href]) => { const link = document.createElement("link"); link.rel = "alternate"; link.hreflang = lang; link.href = `${siteOrigin}${href === "/" ? "" : href}`; document.head.appendChild(link); });
+}
+
 type Locale = (typeof supportedLocales)[number];
 
 const localeLabels: Record<Locale, string> = { en: "English", tr: "Türkçe", ar: "العربية", de: "Deutsch", it: "Italiano", zh: "中文", fr: "Français", pt: "Português" };
@@ -98,19 +116,11 @@ function SiteHeader() {
   useEffect(() => {
     document.documentElement.lang = currentLocale;
     document.documentElement.dir = currentLocale === "ar" ? "rtl" : "ltr";
-  }, [currentLocale]);
-  const productItems = [
-    ["Transaction Passport", "/product#passport"],
-    ["Evidence Graph", "/technology"],
-    ["Transaction Evidence File", "/product#evidence-file"],
-  ];
-  const links = [
-    ["How it works", "/#mechanism"],
-    ["Manufacturers", "/manufacturers"],
-    ["Institutions", "/institutions"],
-    ["Research", "/research"],
-    ["Technology", "/technology"],
-  ];
+    updatePageMetadata(currentLocale, location.split("?")[0]);
+  }, [currentLocale, location]);
+  const turkish = currentLocale === "tr";
+  const productItems = turkish ? [["İşlem Pasaportu", "/tr/islem-pasaportu"], ["Kanıt Grafiği", "/tr/nasil-calisir"], ["İşlem Kanıt Dosyası", "/tr/kurumlar"]] : [["Transaction Passport", "/product#passport"], ["Evidence Graph", "/technology"], ["Transaction Evidence File", "/product#evidence-file"]];
+  const links = turkish ? [["Nasıl çalışır", "/tr/nasil-calisir"], ["Üreticiler", "/tr/ureticiler"], ["Kurumlar", "/tr/kurumlar"], ["Araştırma", "/tr/arastirma"], ["Teknoloji", "/technology"]] : [["How it works", "/#mechanism"], ["Manufacturers", "/manufacturers"], ["Institutions", "/institutions"], ["Research", "/research"], ["Technology", "/technology"]];
   return (
     <header className="site-header">
       <div className="header-inner">
@@ -121,7 +131,7 @@ function SiteHeader() {
             onMouseEnter={() => setProductOpen(true)}
             onMouseLeave={() => setProductOpen(false)}
           >
-            <Link href="/product" className={location === "/product" ? "active" : ""} aria-haspopup="true" aria-expanded={productOpen}>Product</Link>
+            <Link href={turkish ? "/tr/islem-pasaportu" : "/product"} className={location === "/product" ? "active" : ""} aria-haspopup="true" aria-expanded={productOpen}>{turkish ? "Ürün" : "Product"}</Link>
             {productOpen && <div style={{ position: "absolute", top: "100%", left: 0, background: "#151b23", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, padding: 6, minWidth: 200, zIndex: 20 }}>
               {productItems.map(([label, href]) => <a key={label} href={href} style={{ display: "block", padding: "8px 10px", fontSize: 13, color: "#e6edf3", borderRadius: 6, whiteSpace: "nowrap" }}>{label}</a>)}
             </div>}
@@ -130,15 +140,15 @@ function SiteHeader() {
         </nav>
         <div className="header-actions">
           <label className="locale-picker"><span className="sr-only">Language</span><select aria-label="Select language" value={currentLocale} onChange={(event) => { window.location.href = `/${event.target.value}`; }}>{supportedLocales.map((locale) => <option key={locale} value={locale}>{locale.toUpperCase()} · {localeLabels[locale]}</option>)}</select></label>
-          <Link href="/evaluate" className="header-cta">Bring a Transaction <ArrowUpRight size={14} /></Link>
+          <Link href={turkish ? "/tr#evaluate" : "/evaluate"} className="header-cta">{turkish ? "Gerçek bir işlem getirin" : "Bring a Transaction"} <ArrowUpRight size={14} /></Link>
           <button className="mobile-menu-button" aria-label={open ? "Close navigation" : "Open navigation"} onClick={() => setOpen(!open)}>{open ? <X size={20} /> : <Menu size={20} />}</button>
         </div>
       </div>
       {open && <div className="mobile-nav"><nav aria-label="Mobile navigation">
-        <a href="/product" onClick={() => setOpen(false)}>Product<ChevronRight size={15} /></a>
+        <a href={turkish ? "/tr/islem-pasaportu" : "/product"} onClick={() => setOpen(false)}>{turkish ? "Ürün" : "Product"}<ChevronRight size={15} /></a>
         {productItems.map(([label, href]) => <a key={label} href={href} onClick={() => setOpen(false)} style={{ paddingLeft: 24, fontSize: 13, opacity: 0.85 }}>{label}<ChevronRight size={15} /></a>)}
         {links.map(([label, href]) => <a key={label} href={href} onClick={() => setOpen(false)}>{label}<ChevronRight size={15} /></a>)}
-        <Link href="/evaluate" onClick={() => setOpen(false)} className="mobile-eval">Bring a Transaction <ArrowUpRight size={15} /></Link>
+        <Link href="/evaluate" onClick={() => setOpen(false)} className="mobile-eval">{turkish ? "Gerçek bir işlem getirin" : "Bring a Transaction"} <ArrowUpRight size={15} /></Link>
       </nav></div>}
     </header>
   );
@@ -356,6 +366,8 @@ function FinalCTA() {
   return <section className="final-cta"><div className="final-glow" /><div className="container"><SectionLabel index="17" light>Start with the real thing</SectionLabel><h2>Bring us <em>one real transaction.</em></h2><p>We are validating DEĞERIA with Turkish manufacturers. Bring one significant import-to-production-to-export transaction and we will reconstruct the evidence, economics and readiness structure with you.</p><Link href="/evaluate" className="button button-primary">Build a Transaction Passport <ArrowUpRight size={16} /></Link><div className="cta-foot"><span>NO ERP REPLACEMENT REQUIRED</span><span>NO SENSITIVE DOCUMENTS ON FIRST CONTACT</span><span>DEMO MODE AVAILABLE</span></div></div></section>;
 }
 
+function locationLocale(): Locale { return localeFromPath(window.location.pathname); }
+
 function Footer() {
   return <footer className="footer"><div className="container"><div className="footer-top"><div><BrandMark /><p>Economic Transaction<br />Infrastructure</p></div><div className="footer-links"><div><span>Explore</span><a href="#passport">Product</a><a href="#mechanism">How it works</a><a href="/manufacturers">Manufacturers</a><a href="/institutions">Institutions</a><a href="/technology">Technology</a><a href="/research">Research</a></div><div><span>Company</span><a href="/status">System status</a><a href="/evaluate">Contact</a><a href="/evaluate">Careers</a></div><div><span>Legal</span><a href="#top">Privacy</a><a href="#top">Terms</a><a href="#top">Security</a></div></div></div><div className="footer-bottom"><span>© 2026 DEĞERIA</span><span className="footer-status"><i />DEMO INFRASTRUCTURE · v0.1</span></div><p className="footer-disclaimer">DEĞERIA provides technology, evidence, analytical and decision-support services. It does not itself provide banking, insurance, lending, customs, tax or regulated financial services unless separately authorized.</p></div></footer>;
 }
@@ -502,6 +514,17 @@ export function StatusPage() {
   </SubpageShell>;
 }
 
+type TurkishSEOKind = "ureticiler" | "ihracat" | "islem-pasaportu" | "nasil-calisir" | "kurumlar" | "arastirma";
+const turkishSEOContent: Record<TurkishSEOKind, { eyebrow: string; title: React.ReactNode; intro: string; points: string[]; cta: string }> = {
+  ureticiler: { eyebrow: "İhracatçı üreticiler için", title: <>İşleminiz bir <em>sipariş numarasından</em> fazlasıdır.</>, intro: "DEĞERIA, Türkiye'deki üreticilerin önemli işlemlerini ithal girdiden üretime, ihracattan sevkiyata, alacaktan ödemeye kadar yapılandırmasına yardımcı olur.", points: ["Ekonomik durumunuzu görün", "Çalışma sermayesi ihtiyacını anlayın", "Ödeme ve alıcı riskini izleyin", "Kurumsal inceleme için kanıt dosyası hazırlayın"], cta: "Gerçek bir işleminizi getirin" },
+  ihracat: { eyebrow: "İhracat işlemleri", title: <>İhracat verisini <em>ekonomik bağlama</em> dönüştürün.</>, intro: "Sözleşme, tedarikçi, üretim, lojistik, fatura ve ödeme kanıtlarını tek bir işlem görünümünde birleştirin.", points: ["İthalat → üretim → ihracat zincirini bağlayın", "Kanıtın kaynağını ve durumunu görün", "Senaryoları açık varsayımlarla karşılaştırın", "Sonuçları ve gerçekleşen farkları kaydedin"], cta: "İhracat işlemini değerlendirin" },
+  "islem-pasaportu": { eyebrow: "DEĞERIA İşlem Pasaportu", title: <>Bir işlem için <em>tek yapılandırılmış kayıt.</em></>, intro: "İşlem Pasaportu, ticari, ithalat, üretim, ihracat, finans ve risk kanıtlarını ekonomik bir işlem kimliği altında birleştirir.", points: ["Ticari şartlar ve ödeme vadeleri", "İthal girdiler ve üretim kanıtları", "İhracat, sevkiyat ve alacak görünürlüğü", "Finans ve sigorta incelemesine hazırlık"], cta: "Pasaport yaklaşımını görün" },
+  "nasil-calisir": { eyebrow: "Nasıl çalışır", title: <>Kanıttan <em>ekonomik anlayışa.</em></>, intro: "DEĞERIA; kanıtları, olayları ve ekonomik durumu birbirine bağlayan izlenebilir bir yapı kurar.", points: ["Evidence → Event → Economic State", "Assessment → Recommendation → Human Decision", "Action → Outcome → Learning", "Her değer için OBSERVED, CALCULATED, ASSUMED veya ACTUAL durumu"], cta: "Teknoloji mimarisini inceleyin" },
+  kurumlar: { eyebrow: "Kurumlar için", title: <>Daha iyi kanıt. Daha iyi <em>inceleme bağlamı.</em></>, intro: "DEĞERIA; bankalar, sigortacılar, ihracat kredisi kurumları ve yetkili profesyonel aracılar için yapılandırılmış işlem bilgisi hazırlamaya yardımcı olur.", points: ["İncelemeye hazır olmak onay anlamına gelmez", "DEĞERIA kredi vermez ve sigorta yapmaz", "Resmî başvuru sorumlu şirket veya yetkili kurumundur", "Çıktılar, ilgili makam kabul ettiği ölçüde destekleyici bilgi olarak kullanılabilir"], cta: "Kurumsal kullanım sınırlarını görün" },
+  arastirma: { eyebrow: "Araştırma / 2026", title: <>İşlem, ekonomik anlayışın <em>birimi haline geliyor.</em></>, intro: "Ekonomik işlem altyapısı, üretici finansmanı, ticari kanıt ve işlem riski üzerine yöntem ve pilot araştırmaları.", points: ["Ekonomik işlem altyapısı", "Üretici finansmanı", "Ticari kanıt ve izlenebilirlik", "Endüstriyel dijitalleşme ve işlem riski"], cta: "Bir gerçek işlemle başlayın" },
+};
+export function TurkishSEOPage({ kind }: { kind: TurkishSEOKind }) { const content = turkishSEOContent[kind]; return <SubpageShell eyebrow={content.eyebrow} title={content.title} intro={content.intro}><section className="subpage-section"><div className="container"><div className="benefit-grid">{content.points.map((point, index) => <div key={point}><span>0{index + 1}</span><h3>{point}</h3><CheckCircle2 size={17} /></div>)}</div><div className="subpage-cta"><h2>{content.cta}</h2><p>DEĞERIA bağımsız bir teknoloji platformudur; resmî devlet sistemi, gümrük müşaviri, banka veya sigortacı yerine geçmez.</p><Link href="/evaluate" className="button button-primary">Gerçek bir işlemi değerlendirin <ArrowUpRight size={16} /></Link></div></div></section></SubpageShell>; }
+
 export function EvaluatePage() {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -509,7 +532,8 @@ export function EvaluatePage() {
   const [selected, setSelected] = useState<string[]>(["Margin"]);
   const demo = DEMO_TRANSACTION;
   const coreMode = getCoreMode();
-  const options = ["Margin", "Cash requirement", "FX exposure", "Buyer/payment risk", "Financing readiness", "Insurance readiness", "Evidence gaps", "Other"];
+  const turkish = locationLocale() === "tr";
+  const options = turkish ? ["Kâr marjı", "Nakit ihtiyacı", "Kur riski", "Alıcı/ödeme riski", "Finansman hazırlığı", "Sigorta hazırlığı", "Kanıt boşlukları", "Diğer"] : ["Margin", "Cash requirement", "FX exposure", "Buyer/payment risk", "Financing readiness", "Insurance readiness", "Evidence gaps", "Other"];
   const toggle = (item: string) => setSelected(prev => prev.includes(item) ? prev.filter(x => x !== item) : [...prev, item]);
 
   const submit = async (e: FormEvent<HTMLFormElement>) => {
@@ -529,5 +553,5 @@ export function EvaluatePage() {
     }
   };
 
-  return <SubpageShell eyebrow="Pilot evaluation" title={<>Bring us one <em>real transaction.</em></>} intro="We are validating DEĞERIA with Turkish manufacturers. Bring one significant import-to-production-to-export transaction and we will reconstruct the evidence, economics and readiness structure with you."><section className="subpage-section evaluate-section"><div className="container"><div className="evaluate-layout"><div className="evaluate-aside"><span className="card-eyebrow">DEĞERIA / PILOT 001</span><h2>Start with the question behind the <em>transaction.</em></h2><p>Do not send sensitive documents on the first form. After contact, secure document exchange can be established.</p><div className="evaluate-stats"><Metric label="MODEL" value={demo.id} /><Metric label="MODE" value={coreMode === "demo" ? "DEMO + PILOT" : "API + PILOT"} accent="teal" /><Metric label="RESPONSE" value="HUMAN REVIEW" /></div></div>{submitted ? <div className="success-panel"><CheckCircle2 size={30} /><span className="card-eyebrow">REQUEST RECEIVED</span><h2>We'll review the transaction context with you.</h2><p>Your first step is a conversation—not a document upload. The DEĞERIA team will follow up using the contact details provided.</p><Link href="/" className="button button-primary">Return to the infrastructure <ArrowRight size={16} /></Link></div> : <form className="evaluate-form" onSubmit={submit}><div className="form-grid"><label>Company<input required name="company" placeholder="Your company" /></label><label>Country<select name="country" defaultValue=""><option value="" disabled>Select country</option><option>Türkiye</option><option>Germany</option><option>United Kingdom</option><option>Other</option></select></label><label>Industry<input name="industry" placeholder="e.g. industrial equipment" /></label><label>Transaction type<select name="type" defaultValue=""><option value="" disabled>Select type</option><option>Import-linked export</option><option>Export</option><option>Import</option></select></label><label>Approximate transaction size<input name="size" placeholder="e.g. €2.5M" /></label><label>Payment term<input name="payment" placeholder="e.g. 120 days" /></label></div><fieldset><legend>What do you want to understand?</legend><div className="checkbox-grid">{options.map(item => <button type="button" key={item} className={selected.includes(item) ? "checked" : ""} onClick={() => toggle(item)}><span>{selected.includes(item) && <Check size={12} />}</span>{item}</button>)}</div></fieldset>{error && <p className="form-error">{error}</p>}<button type="submit" className="button button-primary submit-button" disabled={submitting}>{submitting ? "Sending to DEĞERIA core…" : "Request a transaction evaluation"} <ArrowUpRight size={16} /></button><p className="form-disclaimer">By submitting, you are requesting an exploratory conversation. This is not a financing, insurance or eligibility application.</p></form>}</div></div></section></SubpageShell>;
+  return <SubpageShell eyebrow={turkish ? "Pilot değerlendirme" : "Pilot evaluation"} title={turkish ? <>Gerçek bir <em>işleminizi getirin.</em></> : <>Bring us one <em>real transaction.</em></>} intro={turkish ? "Türkiye'deki üreticilerle DEĞERIA'yı doğruluyoruz. Önemli bir ithalat-üretim-ihracat işlemini birlikte yeniden yapılandıralım." : "We are validating DEĞERIA with Turkish manufacturers. Bring one significant import-to-production-to-export transaction and we will reconstruct the evidence, economics and readiness structure with you."}><section className="subpage-section evaluate-section"><div className="container"><div className="evaluate-layout"><div className="evaluate-aside"><span className="card-eyebrow">DEĞERIA / PILOT 001</span><h2>Start with the question behind the <em>transaction.</em></h2><p>Do not send sensitive documents on the first form. After contact, secure document exchange can be established.</p><div className="evaluate-stats"><Metric label="MODEL" value={demo.id} /><Metric label="MODE" value={coreMode === "demo" ? "DEMO + PILOT" : "API + PILOT"} accent="teal" /><Metric label="RESPONSE" value="HUMAN REVIEW" /></div></div>{submitted ? <div className="success-panel"><CheckCircle2 size={30} /><span className="card-eyebrow">REQUEST RECEIVED</span><h2>We'll review the transaction context with you.</h2><p>Your first step is a conversation—not a document upload. The DEĞERIA team will follow up using the contact details provided.</p><Link href="/" className="button button-primary">Return to the infrastructure <ArrowRight size={16} /></Link></div> : <form className="evaluate-form" onSubmit={submit}><div className="form-grid"><label>Company<input required name="company" placeholder={turkish ? "Şirketiniz" : "Your company"} /></label><label>Country<select name="country" defaultValue=""><option value="" disabled>{turkish ? "Ülke seçin" : "Select country"}</option><option>Türkiye</option><option>Germany</option><option>United Kingdom</option><option>Other</option></select></label><label>Industry<input name="industry" placeholder={turkish ? "örn. endüstriyel ekipman" : "e.g. industrial equipment"} /></label><label>Transaction type<select name="type" defaultValue=""><option value="" disabled>{turkish ? "İşlem türü seçin" : "Select type"}</option><option>Import-linked export</option><option>Export</option><option>Import</option></select></label><label>Approximate transaction size<input name="size" placeholder={turkish ? "örn. €2,5M" : "e.g. €2.5M"} /></label><label>Payment term<input name="payment" placeholder={turkish ? "örn. 120 gün" : "e.g. 120 days"} /></label></div><fieldset><legend>{turkish ? "Neyi anlamak istiyorsunuz?" : "What do you want to understand?"}</legend><div className="checkbox-grid">{options.map(item => <button type="button" key={item} className={selected.includes(item) ? "checked" : ""} onClick={() => toggle(item)}><span>{selected.includes(item) && <Check size={12} />}</span>{item}</button>)}</div></fieldset>{error && <p className="form-error">{error}</p>}<button type="submit" className="button button-primary submit-button" disabled={submitting}>{submitting ? (turkish ? "DEĞERIA çekirdeğine gönderiliyor…" : "Sending to DEĞERIA core…") : (turkish ? "İşlem değerlendirmesi isteyin" : "Request a transaction evaluation")} <ArrowUpRight size={16} /></button><p className="form-disclaimer">{turkish ? "Bu form keşif amaçlı bir görüşme talebidir. Finansman, sigorta veya uygunluk başvurusu değildir." : "By submitting, you are requesting an exploratory conversation. This is not a financing, insurance or eligibility application."}</p></form>}</div></div></section></SubpageShell>;
 }

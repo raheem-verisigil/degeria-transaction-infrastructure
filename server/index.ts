@@ -18,8 +18,9 @@ async function startServer() {
 
   app.use(express.static(staticPath));
 
-  // Handle client-side routing - serve index.html for all routes
-  app.get("/{*splat}", (_req, res) => {
+  // Handle client-side routing - serve index.html for all routes.
+  // Express 4 uses a wildcard path; /{*splat} is Express 5 syntax.
+  app.get("*", (_req, res) => {
     res.sendFile(path.join(staticPath, "index.html"));
   });
 
