@@ -119,7 +119,7 @@ function SiteHeader() {
     updatePageMetadata(currentLocale, location.split("?")[0]);
   }, [currentLocale, location]);
   const turkish = currentLocale === "tr";
-  const productItems = turkish ? [["İşlem Pasaportu", "/tr/islem-pasaportu"], ["Kanıt Grafiği", "/tr/nasil-calisir"], ["İşlem Kanıt Dosyası", "/tr/kurumlar"]] : [["Transaction Passport", "/product#passport"], ["Evidence Graph", "/technology"], ["Transaction Evidence File", "/product#evidence-file"]];
+  const productItems = turkish ? [["İşlem Pasaportu", "/tr/islem-pasaportu"], ["Kanıt Grafiği", "/tr/nasil-calisir"], ["ÜRETIVA AYAR", "/ayar"], ["İşlem Kanıt Dosyası", "/tr/kurumlar"]] : [["Transaction Passport", "/product#passport"], ["Evidence Graph", "/technology"], ["ÜRETIVA AYAR", "/ayar"], ["Transaction Evidence File", "/product#evidence-file"]];
   const links = turkish ? [["Nasıl çalışır", "/tr/nasil-calisir"], ["Üreticiler", "/tr/ureticiler"], ["Kurumlar", "/tr/kurumlar"], ["Araştırma", "/tr/arastirma"], ["Teknoloji", "/technology"]] : [["How it works", "/#mechanism"], ["Manufacturers", "/manufacturers"], ["Institutions", "/institutions"], ["Research", "/research"], ["Technology", "/technology"]];
   return (
     <header className="site-header">

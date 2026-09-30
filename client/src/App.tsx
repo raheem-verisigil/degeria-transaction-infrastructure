@@ -3,6 +3,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import AyarPage from "./pages/AyarPage";
 import Home, { EvaluatePage, InstitutionsPage, ManufacturersPage, ProductPage, ResearchPage, StatusPage, TechnologyPage, TurkishSEOPage } from "./pages/Home";
 function Router() {
   return (
@@ -23,6 +24,7 @@ function Router() {
       <Route path="/status" component={StatusPage} />
       <Route path="/product" component={ProductPage} />
       <Route path="/evaluate" component={EvaluatePage} />
+      <Route path="/ayar" component={AyarPage} />
       <Route path="/tr/ureticiler" component={() => <TurkishSEOPage kind="ureticiler" />} />
       <Route path="/tr/ihracat" component={() => <TurkishSEOPage kind="ihracat" />} />
       <Route path="/tr/islem-pasaportu" component={() => <TurkishSEOPage kind="islem-pasaportu" />} />
