@@ -85,7 +85,7 @@ const TR: Record<string, string> = {
   "From fragmented evidence to a recorded outcome.": "Parçalı kanıttan kaydedilmiş sonuca.",
   "Start with the real thing": "Gerçek işlemle başlayın",
   "Bring us one real transaction.": "Bize gerçek bir işlem getirin.",
-  "We are validating DEĞERIA with Turkish manufacturers. Bring one significant import-to-production-to-export transaction and we will reconstruct the evidence, economics and readiness structure with you.": "DEĞERIA'yı Türkiye'deki üreticilerle doğruluyoruz. Önemli bir ithalat-üretim-ihracat işlemi getirin; kanıtları, ekonomiyi ve hazırlık yapısını sizinle birlikte yeniden oluşturalım.",
+  "We are validating DEĞERIA with Turkish manufacturers. Bring one significant import-to-production-to-export transaction and we will reconstruct the evidence, economics and readiness structure with you.": "DEĞERIA'yı TUTKIYE'deki üreticilerle doğruluyoruz. Önemli bir ithalat-üretim-ihracat işlemi getirin; kanıtları, ekonomiyi ve hazırlık yapısını sizinle birlikte yeniden oluşturalım.",
   "Build a Transaction Passport": "İşlem Pasaportu oluşturun",
   "NO ERP REPLACEMENT REQUIRED": "ERP DEĞİŞİKLİĞİ GEREKMEZ",
   "NO SENSITIVE DOCUMENTS ON FIRST CONTACT": "İLK TEMASTA HASSAS BELGE GEREKMEZ",
